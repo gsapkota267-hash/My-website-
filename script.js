@@ -1,56 +1,85 @@
-/* =========================================================
-   GAURAV SAPKOTA WEBSITE
-   COMPLETE SCRIPT.JS
-========================================================= */
-
 document.addEventListener("DOMContentLoaded", () => {
 
-  /* =======================================================
-     ENABLE JAVASCRIPT ANIMATIONS
-  ======================================================= */
+  /* ==================================================
+     OPENING LOADER
+  ================================================== */
 
-  document.documentElement.classList.add("js-enabled");
+  const loader = document.getElementById("page-loader");
+
+  // Prevent scrolling while opening animation is playing
+  document.body.classList.add("loader-active");
 
 
-  /* =======================================================
-     MOBILE MENU
-  ======================================================= */
+  if (loader) {
 
-  const menuButton = document.querySelector(".menu-btn");
+    window.addEventListener("load", () => {
+
+      // Keep intro visible for a few seconds
+      setTimeout(() => {
+
+        loader.classList.add("loaded");
+
+        document.body.classList.remove("loader-active");
+
+      }, 4000);
+
+    });
+
+  } else {
+
+    // If loader doesn't exist, allow scrolling
+    document.body.classList.remove("loader-active");
+
+  }
+
+
+  /* ==================================================
+     CURRENT YEAR
+  ================================================== */
+
+  const year = document.getElementById("year");
+
+  if (year) {
+    year.textContent = new Date().getFullYear();
+  }
+
+
+  /* ==================================================
+     MOBILE NAVIGATION
+  ================================================== */
+
+  const menuBtn = document.querySelector(".menu-btn");
   const nav = document.querySelector(".nav");
-  const navLinks = document.querySelectorAll(".nav a");
 
-  if (menuButton && nav) {
+  if (menuBtn && nav) {
 
-    menuButton.addEventListener("click", () => {
+    menuBtn.addEventListener("click", () => {
 
-      nav.classList.toggle("open");
+      nav.classList.toggle("active");
 
-      const isOpen = nav.classList.contains("open");
+      const isOpen = nav.classList.contains("active");
 
-      menuButton.setAttribute(
-        "aria-label",
-        isOpen ? "Close menu" : "Open menu"
+      menuBtn.setAttribute(
+        "aria-expanded",
+        isOpen ? "true" : "false"
       );
-
-      menuButton.textContent = isOpen ? "✕" : "☰";
 
     });
 
 
-    /* Close menu after clicking a link */
+    /* Close menu when a navigation link is clicked */
 
-    navLinks.forEach(link => {
+    const navLinks = nav.querySelectorAll("a");
+
+    navLinks.forEach((link) => {
 
       link.addEventListener("click", () => {
 
-        nav.classList.remove("open");
+        nav.classList.remove("active");
 
-        menuButton.textContent = "☰";
-
-        menuButton.setAttribute(
-          "aria-label",
-          "Open menu"
+        menuBtn.setAttribute(
+          "aria-expanded",
+          "false"
         );
 
       });
@@ -60,283 +89,260 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  /* =======================================================
-     ADD SCROLL ANIMATION CLASS
-  ======================================================= */
+  /* ==================================================
+     SMOOTH SCROLL
+  ================================================== */
 
-  const elementsToAnimate = [
+  const links = document.querySelectorAll('a[href^="#"]');
 
-    ".section-heading",
-    ".about-grid > div",
-    ".card",
-    ".contact-box > div",
-    ".contact-buttons .contact-btn"
+  links.forEach((link) => {
 
-  ];
+    link.addEventListener("click", (event) => {
 
-  elementsToAnimate.forEach(selector => {
+      const targetId = link.getAttribute("href");
 
-    document.querySelectorAll(selector).forEach(element => {
+      if (!targetId || targetId === "#") {
+        return;
+      }
 
-      element.classList.add("animate-on-scroll");
+      const target = document.querySelector(targetId);
+
+      if (target) {
+
+        event.preventDefault();
+
+        target.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+      }
 
     });
 
   });
 
 
-  /* =======================================================
-     SCROLL REVEAL
-  ======================================================= */
+  /* ==================================================
+     SCROLL REVEAL ANIMATION
+  ================================================== */
 
-  const animatedElements =
-    document.querySelectorAll(".animate-on-scroll");
+  const revealElements = document.querySelectorAll(
+    ".section-heading, .about-text, .feature-card, .card, .contact-box, .contact-buttons"
+  );
 
-  const observer = new IntersectionObserver(
-    (entries, observer) => {
 
-      entries.forEach(entry => {
+  revealElements.forEach((element) => {
 
-        if (entry.isIntersecting) {
+    element.classList.add("reveal");
 
-          entry.target.classList.add("show");
+  });
 
-          observer.unobserve(entry.target);
 
-        }
+  if ("IntersectionObserver" in window) {
+
+    const observer = new IntersectionObserver(
+      (entries, observer) => {
+
+        entries.forEach((entry) => {
+
+          if (entry.isIntersecting) {
+
+            entry.target.classList.add("show");
+
+            observer.unobserve(entry.target);
+
+          }
+
+        });
+
+      },
+      {
+        threshold: 0.15
+      }
+    );
+
+
+    revealElements.forEach((element) => {
+
+      observer.observe(element);
+
+    });
+
+  } else {
+
+    revealElements.forEach((element) => {
+
+      element.classList.add("show");
+
+    });
+
+  }
+
+
+  /* ==================================================
+     HERO ENTRANCE
+  ================================================== */
+
+  const heroPhoto = document.querySelector(".hero-photo-wrapper");
+  const heroContent = document.querySelector(".hero-content");
+
+  if (heroPhoto) {
+    heroPhoto.classList.add("hero-reveal");
+  }
+
+  if (heroContent) {
+    heroContent.classList.add("hero-reveal");
+  }
+
+
+  /* ==================================================
+     HEADER SCROLL EFFECT
+  ================================================== */
+
+  const header = document.querySelector(".header");
+
+
+  function updateHeader() {
+
+    if (!header) {
+      return;
+    }
+
+    if (window.scrollY > 50) {
+
+      header.classList.add("scrolled");
+
+    } else {
+
+      header.classList.remove("scrolled");
+
+    }
+
+  }
+
+
+  window.addEventListener(
+    "scroll",
+    updateHeader,
+    { passive: true }
+  );
+
+
+  updateHeader();
+
+
+  /* ==================================================
+     ACTIVE NAVIGATION LINK
+  ================================================== */
+
+  const sections = document.querySelectorAll("main section[id]");
+  const navigationLinks = document.querySelectorAll(".nav a");
+
+
+  if ("IntersectionObserver" in window) {
+
+    const sectionObserver = new IntersectionObserver(
+      (entries) => {
+
+        entries.forEach((entry) => {
+
+          if (entry.isIntersecting) {
+
+            const id = entry.target.getAttribute("id");
+
+            navigationLinks.forEach((link) => {
+
+              link.classList.remove("active");
+
+              if (
+                link.getAttribute("href") === `#${id}`
+              ) {
+
+                link.classList.add("active");
+
+              }
+
+            });
+
+          }
+
+        });
+
+      },
+      {
+        threshold: 0.35
+      }
+    );
+
+
+    sections.forEach((section) => {
+
+      sectionObserver.observe(section);
+
+    });
+
+  }
+
+
+  /* ==================================================
+     IMAGE LOAD EFFECT
+  ================================================== */
+
+  const profilePhoto =
+    document.querySelector(".profile-photo");
+
+
+  if (profilePhoto) {
+
+    if (profilePhoto.complete) {
+
+      profilePhoto.classList.add("image-loaded");
+
+    } else {
+
+      profilePhoto.addEventListener("load", () => {
+
+        profilePhoto.classList.add("image-loaded");
 
       });
 
-    },
-    {
-      threshold: 0.12
-    }
-  );
-
-
-  animatedElements.forEach(element => {
-
-    observer.observe(element);
-
-  });
-
-
-  /* =======================================================
-     OPENING ANIMATION
-  ======================================================= */
-
-  const loader = document.createElement("div");
-
-  loader.className = "page-loader";
-
-  loader.innerHTML = `
-    <div class="loader-logo">
-      GAURAV<span> SAPKOTA</span>
-    </div>
-
-    <div class="loader-line"></div>
-  `;
-
-  document.body.classList.add("page-loading");
-
-  document.body.prepend(loader);
-
-
-  /* Wait for website to load */
-
-  window.addEventListener("load", () => {
-
-    setTimeout(() => {
-
-      loader.classList.add("hide");
-
-      document.body.classList.remove("page-loading");
-
-      /* Start hero animation */
-
-      animateHero();
-
-      /* Remove loader after animation */
-
-      setTimeout(() => {
-
-        loader.remove();
-
-      }, 800);
-
-    }, 700);
-
-  });
-
-
-  /* =======================================================
-     HERO ANIMATION
-  ======================================================= */
-
-  function animateHero() {
-
-    const photo = document.querySelector(".profile-photo");
-    const heroContent = document.querySelector(".hero-content");
-
-    if (photo) {
-
-      photo.animate(
-        [
-          {
-            opacity: 0,
-            transform: "translateY(40px) scale(0.96)"
-          },
-          {
-            opacity: 1,
-            transform: "translateY(0) scale(1)"
-          }
-        ],
-        {
-          duration: 900,
-          easing: "cubic-bezier(0.22, 1, 0.36, 1)",
-          fill: "forwards"
-        }
-      );
-
-    }
-
-
-    if (heroContent) {
-
-      heroContent.animate(
-        [
-          {
-            opacity: 0,
-            transform: "translateY(35px)"
-          },
-          {
-            opacity: 1,
-            transform: "translateY(0)"
-          }
-        ],
-        {
-          duration: 900,
-          delay: 180,
-          easing: "cubic-bezier(0.22, 1, 0.36, 1)",
-          fill: "forwards"
-        }
-      );
-
     }
 
   }
 
 
-  /* =======================================================
-     BUTTON RIPPLE EFFECT
-  ======================================================= */
+  /* ==================================================
+     EXTERNAL LINKS
+  ================================================== */
 
-  const buttons = document.querySelectorAll(
-    ".btn, .contact-btn"
-  );
+  const externalLinks =
+    document.querySelectorAll('a[target="_blank"]');
 
-  buttons.forEach(button => {
 
-    button.addEventListener("click", function(event) {
+  externalLinks.forEach((link) => {
 
-      const ripple = document.createElement("span");
-
-      ripple.style.position = "absolute";
-      ripple.style.width = "10px";
-      ripple.style.height = "10px";
-      ripple.style.borderRadius = "50%";
-      ripple.style.background = "rgba(255,255,255,0.35)";
-      ripple.style.transform = "translate(-50%, -50%)";
-      ripple.style.pointerEvents = "none";
-
-      const rect = this.getBoundingClientRect();
-
-      ripple.style.left =
-        `${event.clientX - rect.left}px`;
-
-      ripple.style.top =
-        `${event.clientY - rect.top}px`;
-
-      this.style.position = "relative";
-      this.style.overflow = "hidden";
-
-      this.appendChild(ripple);
-
-      ripple.animate(
-        [
-          {
-            width: "10px",
-            height: "10px",
-            opacity: 0.7
-          },
-          {
-            width: "400px",
-            height: "400px",
-            opacity: 0
-          }
-        ],
-        {
-          duration: 600,
-          easing: "ease-out"
-        }
-      );
-
-      setTimeout(() => {
-
-        ripple.remove();
-
-      }, 600);
-
-    });
+    link.setAttribute(
+      "rel",
+      "noopener noreferrer"
+    );
 
   });
 
 
-  /* =======================================================
-     AUTOMATIC FOOTER YEAR
-  ======================================================= */
+  /* ==================================================
+     PREVENT LOADER GETTING STUCK
+  ================================================== */
 
-  const yearElement = document.getElementById("year");
+  setTimeout(() => {
 
-  if (yearElement) {
+    document.body.classList.remove("loader-active");
 
-    yearElement.textContent =
-      new Date().getFullYear();
-
-  }
-
-
-  /* =======================================================
-     CLOSE MOBILE MENU WHEN CLICKING OUTSIDE
-  ======================================================= */
-
-  document.addEventListener("click", event => {
-
-    if (!nav || !menuButton) return;
-
-    const clickedInsideMenu =
-      nav.contains(event.target);
-
-    const clickedButton =
-      menuButton.contains(event.target);
-
-    if (
-      !clickedInsideMenu &&
-      !clickedButton &&
-      nav.classList.contains("open")
-    ) {
-
-      nav.classList.remove("open");
-
-      menuButton.textContent = "☰";
-
-      menuButton.setAttribute(
-        "aria-label",
-        "Open menu"
-      );
-
+    if (loader) {
+      loader.classList.add("loaded");
     }
 
-  });
+  }, 7000);
+
 
 });
