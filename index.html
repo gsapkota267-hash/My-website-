@@ -19,7 +19,6 @@
   =================================================== -->
 
   <meta name="robots" content="index, follow">
-
   <meta name="googlebot" content="index, follow">
 
   <meta
@@ -54,9 +53,13 @@
     content="https://gsapkota267-hash.github.io/"
   >
 
+  <!-- TOP PROFILE PHOTO -->
+  <!-- Change this filename only if your black & white photo
+       has a different filename. -->
+
   <meta
     property="og:image"
-    content="https://gsapkota267-hash.github.io/IMG_0473.jpg"
+    content="https://gsapkota267-hash.github.io/black-white.jpg"
   >
 
   <meta
@@ -88,7 +91,7 @@
 
   <meta
     name="twitter:image"
-    content="https://gsapkota267-hash.github.io/IMG_0473.jpg"
+    content="https://gsapkota267-hash.github.io/black-white.jpg"
   >
 
 
@@ -123,7 +126,7 @@
     "name": "Gaurav Sapkota",
     "url": "https://gsapkota267-hash.github.io/",
     "image": [
-      "https://gsapkota267-hash.github.io/IMG_0473.jpg",
+      "https://gsapkota267-hash.github.io/black-white.jpg",
       "https://gsapkota267-hash.github.io/IMG_20260812_214508.png",
       "https://gsapkota267-hash.github.io/DSC_9480.JPG"
     ],
@@ -272,16 +275,26 @@
     </a>
 
 
+    <!-- THREE-LINE MENU BUTTON -->
+
     <button
       class="menu-btn"
+      type="button"
       aria-label="Open navigation menu"
       aria-expanded="false"
+      aria-controls="main-navigation"
     >
       ☰
     </button>
 
 
-    <nav class="nav">
+    <!-- NAVIGATION -->
+
+    <nav
+      class="nav"
+      id="main-navigation"
+      aria-label="Main navigation"
+    >
 
       <a href="#home">Home</a>
 
@@ -313,11 +326,13 @@
     <section id="home" class="hero">
 
 
+      <!-- TOP PROFILE PHOTO -->
+
       <div class="hero-photo-wrapper">
 
         <img
-          src="IMG_0473.jpg"
-          alt="Gaurav Sapkota - Personal Website"
+          src="black-white.jpg"
+          alt="Gaurav Sapkota - Black and white profile photo"
           class="profile-photo"
           loading="eager"
         >
