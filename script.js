@@ -6,13 +6,6 @@
 document.addEventListener("DOMContentLoaded", () => {
 
   /* =======================================================
-     ENABLE JAVASCRIPT ANIMATIONS
-  ======================================================= */
-
-  document.documentElement.classList.add("js-enabled");
-
-
-  /* =======================================================
      MOBILE MENU
   ======================================================= */
 
@@ -24,13 +17,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     menuButton.addEventListener("click", () => {
 
-      nav.classList.toggle("open");
+      nav.classList.toggle("active");
 
-      const isOpen = nav.classList.contains("open");
+      const isOpen = nav.classList.contains("active");
+
+      menuButton.setAttribute(
+        "aria-expanded",
+        isOpen ? "true" : "false"
+      );
 
       menuButton.setAttribute(
         "aria-label",
-        isOpen ? "Close menu" : "Open menu"
+        isOpen ? "Close navigation menu" : "Open navigation menu"
       );
 
       menuButton.textContent = isOpen ? "✕" : "☰";
@@ -40,18 +38,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* Close menu after clicking a link */
 
-    navLinks.forEach(link => {
+    navLinks.forEach((link) => {
 
       link.addEventListener("click", () => {
 
-        nav.classList.remove("open");
+        nav.classList.remove("active");
 
-        menuButton.textContent = "☰";
+        menuButton.setAttribute(
+          "aria-expanded",
+          "false"
+        );
 
         menuButton.setAttribute(
           "aria-label",
-          "Open menu"
+          "Open navigation menu"
         );
+
+        menuButton.textContent = "☰";
 
       });
 
@@ -61,24 +64,92 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =======================================================
-     ADD SCROLL ANIMATION CLASS
+     CLOSE MOBILE MENU WHEN CLICKING OUTSIDE
   ======================================================= */
 
-  const elementsToAnimate = [
+  document.addEventListener("click", (event) => {
 
-    ".section-heading",
-    ".about-grid > div",
-    ".card",
-    ".contact-box > div",
-    ".contact-buttons .contact-btn"
+    if (!nav || !menuButton) {
+      return;
+    }
 
-  ];
+    const clickedInsideNav =
+      nav.contains(event.target);
 
-  elementsToAnimate.forEach(selector => {
+    const clickedMenuButton =
+      menuButton.contains(event.target);
 
-    document.querySelectorAll(selector).forEach(element => {
+    if (
+      !clickedInsideNav &&
+      !clickedMenuButton &&
+      nav.classList.contains("active")
+    ) {
 
-      element.classList.add("animate-on-scroll");
+      nav.classList.remove("active");
+
+      menuButton.setAttribute(
+        "aria-expanded",
+        "false"
+      );
+
+      menuButton.setAttribute(
+        "aria-label",
+        "Open navigation menu"
+      );
+
+      menuButton.textContent = "☰";
+
+    }
+
+  });
+
+
+  /* =======================================================
+     FOOTER YEAR
+  ======================================================= */
+
+  const yearElement =
+    document.getElementById("year");
+
+  if (yearElement) {
+
+    yearElement.textContent =
+      new Date().getFullYear();
+
+  }
+
+
+  /* =======================================================
+     SMOOTH SCROLL
+  ======================================================= */
+
+  const anchorLinks =
+    document.querySelectorAll('a[href^="#"]');
+
+  anchorLinks.forEach((link) => {
+
+    link.addEventListener("click", (event) => {
+
+      const targetId =
+        link.getAttribute("href");
+
+      if (!targetId || targetId === "#") {
+        return;
+      }
+
+      const target =
+        document.querySelector(targetId);
+
+      if (!target) {
+        return;
+      }
+
+      event.preventDefault();
+
+      target.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
 
     });
 
@@ -86,143 +157,93 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =======================================================
+     HEADER SCROLL EFFECT
+  ======================================================= */
+
+  const header =
+    document.querySelector(".header");
+
+  function updateHeader() {
+
+    if (!header) {
+      return;
+    }
+
+    if (window.scrollY > 50) {
+
+      header.classList.add("scrolled");
+
+    } else {
+
+      header.classList.remove("scrolled");
+
+    }
+
+  }
+
+  window.addEventListener(
+    "scroll",
+    updateHeader,
+    { passive: true }
+  );
+
+  updateHeader();
+
+
+  /* =======================================================
      SCROLL REVEAL
   ======================================================= */
 
-  const animatedElements =
-    document.querySelectorAll(".animate-on-scroll");
-
-  const observer = new IntersectionObserver(
-    (entries, observer) => {
-
-      entries.forEach(entry => {
-
-        if (entry.isIntersecting) {
-
-          entry.target.classList.add("show");
-
-          observer.unobserve(entry.target);
-
-        }
-
-      });
-
-    },
-    {
-      threshold: 0.12
-    }
+  const elementsToReveal = document.querySelectorAll(
+    ".section-heading, .about-text, .feature-card, .card, .contact-box, .contact-buttons"
   );
 
 
-  animatedElements.forEach(element => {
+  elementsToReveal.forEach((element) => {
 
-    observer.observe(element);
-
-  });
-
-
-  /* =======================================================
-     OPENING ANIMATION
-  ======================================================= */
-
-  const loader = document.createElement("div");
-
-  loader.className = "page-loader";
-
-  loader.innerHTML = `
-    <div class="loader-logo">
-      GAURAV<span> SAPKOTA</span>
-    </div>
-
-    <div class="loader-line"></div>
-  `;
-
-  document.body.classList.add("page-loading");
-
-  document.body.prepend(loader);
-
-
-  /* Wait for website to load */
-
-  window.addEventListener("load", () => {
-
-    setTimeout(() => {
-
-      loader.classList.add("hide");
-
-      document.body.classList.remove("page-loading");
-
-      /* Start hero animation */
-
-      animateHero();
-
-      /* Remove loader after animation */
-
-      setTimeout(() => {
-
-        loader.remove();
-
-      }, 800);
-
-    }, 700);
+    element.classList.add("reveal");
 
   });
 
 
-  /* =======================================================
-     HERO ANIMATION
-  ======================================================= */
+  if ("IntersectionObserver" in window) {
 
-  function animateHero() {
+    const observer =
+      new IntersectionObserver(
+        (entries, observer) => {
 
-    const photo = document.querySelector(".profile-photo");
-    const heroContent = document.querySelector(".hero-content");
+          entries.forEach((entry) => {
 
-    if (photo) {
+            if (entry.isIntersecting) {
 
-      photo.animate(
-        [
-          {
-            opacity: 0,
-            transform: "translateY(40px) scale(0.96)"
-          },
-          {
-            opacity: 1,
-            transform: "translateY(0) scale(1)"
-          }
-        ],
+              entry.target.classList.add("show");
+
+              observer.unobserve(entry.target);
+
+            }
+
+          });
+
+        },
         {
-          duration: 900,
-          easing: "cubic-bezier(0.22, 1, 0.36, 1)",
-          fill: "forwards"
+          threshold: 0.15
         }
       );
 
-    }
 
+    elementsToReveal.forEach((element) => {
 
-    if (heroContent) {
+      observer.observe(element);
 
-      heroContent.animate(
-        [
-          {
-            opacity: 0,
-            transform: "translateY(35px)"
-          },
-          {
-            opacity: 1,
-            transform: "translateY(0)"
-          }
-        ],
-        {
-          duration: 900,
-          delay: 180,
-          easing: "cubic-bezier(0.22, 1, 0.36, 1)",
-          fill: "forwards"
-        }
-      );
+    });
 
-    }
+  } else {
+
+    elementsToReveal.forEach((element) => {
+
+      element.classList.add("show");
+
+    });
 
   }
 
@@ -231,25 +252,38 @@ document.addEventListener("DOMContentLoaded", () => {
      BUTTON RIPPLE EFFECT
   ======================================================= */
 
-  const buttons = document.querySelectorAll(
-    ".btn, .contact-btn"
-  );
+  const buttons =
+    document.querySelectorAll(
+      ".btn, .contact-btn"
+    );
 
-  buttons.forEach(button => {
 
-    button.addEventListener("click", function(event) {
+  buttons.forEach((button) => {
 
-      const ripple = document.createElement("span");
+    button.addEventListener("click", function (event) {
+
+      const ripple =
+        document.createElement("span");
+
+      const rect =
+        this.getBoundingClientRect();
+
 
       ripple.style.position = "absolute";
+
       ripple.style.width = "10px";
       ripple.style.height = "10px";
-      ripple.style.borderRadius = "50%";
-      ripple.style.background = "rgba(255,255,255,0.35)";
-      ripple.style.transform = "translate(-50%, -50%)";
-      ripple.style.pointerEvents = "none";
 
-      const rect = this.getBoundingClientRect();
+      ripple.style.borderRadius = "50%";
+
+      ripple.style.background =
+        "rgba(255,255,255,0.35)";
+
+      ripple.style.transform =
+        "translate(-50%, -50%)";
+
+      ripple.style.pointerEvents =
+        "none";
 
       ripple.style.left =
         `${event.clientX - rect.left}px`;
@@ -257,10 +291,13 @@ document.addEventListener("DOMContentLoaded", () => {
       ripple.style.top =
         `${event.clientY - rect.top}px`;
 
+
       this.style.position = "relative";
       this.style.overflow = "hidden";
 
+
       this.appendChild(ripple);
+
 
       ripple.animate(
         [
@@ -281,6 +318,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       );
 
+
       setTimeout(() => {
 
         ripple.remove();
@@ -293,50 +331,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =======================================================
-     AUTOMATIC FOOTER YEAR
+     OPENING LOADER
   ======================================================= */
 
-  const yearElement = document.getElementById("year");
+  const loader =
+    document.getElementById("page-loader");
 
-  if (yearElement) {
 
-    yearElement.textContent =
-      new Date().getFullYear();
+  if (loader) {
+
+    document.body.style.overflow = "hidden";
+
+
+    /*
+       Wait until the page is loaded,
+       then hide the loader.
+    */
+
+    window.addEventListener("load", () => {
+
+      setTimeout(() => {
+
+        loader.classList.add("hide");
+
+        document.body.style.overflow = "";
+
+      }, 3500);
+
+    });
 
   }
 
-
-  /* =======================================================
-     CLOSE MOBILE MENU WHEN CLICKING OUTSIDE
-  ======================================================= */
-
-  document.addEventListener("click", event => {
-
-    if (!nav || !menuButton) return;
-
-    const clickedInsideMenu =
-      nav.contains(event.target);
-
-    const clickedButton =
-      menuButton.contains(event.target);
-
-    if (
-      !clickedInsideMenu &&
-      !clickedButton &&
-      nav.classList.contains("open")
-    ) {
-
-      nav.classList.remove("open");
-
-      menuButton.textContent = "☰";
-
-      menuButton.setAttribute(
-        "aria-label",
-        "Open menu"
-      );
-
-    }
-
-  });
 
 });
