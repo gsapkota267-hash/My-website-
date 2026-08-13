@@ -1,4 +1,3 @@
-
 /* =========================================================
    GAURAV SAPKOTA WEBSITE
    COMPLETE SCRIPT.JS
@@ -345,69 +344,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /*
-       Wait until the page is loaded,
-       then hide the loader.
+       Hide the loader after 3.5 seconds.
 
-       The loader will also have a safety
-       timeout so it cannot remain stuck.
+       This does not wait for window.load,
+       so the loader cannot get stuck waiting
+       for an image or another resource.
     */
 
-    let loaderHidden = false;
-
-
-    function hideLoader() {
-
-      if (loaderHidden) {
-        return;
-      }
-
-      loaderHidden = true;
+    setTimeout(() => {
 
       loader.classList.add("hide");
 
       document.body.style.overflow = "";
 
-    }
-
-
-    /* Normal loader timing */
-
-    const loaderTimer =
-      setTimeout(() => {
-
-        hideLoader();
-
-      }, 3500);
-
-
-    /* Wait for the page load event */
-
-    window.addEventListener("load", () => {
-
-      setTimeout(() => {
-
-        clearTimeout(loaderTimer);
-
-        hideLoader();
-
-      }, 3500);
-
-    });
-
-
-    /*
-       Emergency fallback.
-
-       If the browser does not fire the
-       load event correctly, the loader
-       will still disappear.
-    */
-
-    setTimeout(() => {
-
-      hideLoader();
-
-    }, 7000);
+    }, 3500);
 
   }
 
