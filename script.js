@@ -342,23 +342,64 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.body.style.overflow = "hidden";
 
+    let loaderHidden = false;
+
+
+    function hideLoader() {
+
+      if (loaderHidden) {
+        return;
+      }
+
+      loaderHidden = true;
+
+      loader.classList.add("hide");
+
+      document.body.style.overflow = "";
+
+    }
+
 
     /*
-       Wait until the page is loaded,
-       then hide the loader.
+       Keep the original 3.5 second loader timing.
+       This preserves the existing animation.
+    */
+
+    const hideTimer = setTimeout(() => {
+
+      hideLoader();
+
+    }, 3500);
+
+
+    /*
+       Hide normally when the page finishes loading.
     */
 
     window.addEventListener("load", () => {
 
+      clearTimeout(hideTimer);
+
       setTimeout(() => {
 
-        loader.classList.add("hide");
-
-        document.body.style.overflow = "";
+        hideLoader();
 
       }, 3500);
 
     });
+
+
+    /*
+       Safety fallback.
+       Prevents the loader from staying forever
+       if the browser/WebView does not fire load normally.
+    */
+
+    setTimeout(() => {
+
+      hideLoader();
+
+    }, 7000);
 
   }
 
