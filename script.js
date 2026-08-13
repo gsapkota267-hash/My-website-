@@ -1,4 +1,3 @@
-alert("SCRIPT JS IS WORKING");
 
 /* =========================================================
    GAURAV SAPKOTA WEBSITE
