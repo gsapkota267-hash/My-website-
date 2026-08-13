@@ -28,15 +28,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
       menuButton.setAttribute(
         "aria-label",
-        isOpen ? "Close navigation menu" : "Open navigation menu"
+        isOpen
+          ? "Close navigation menu"
+          : "Open navigation menu"
       );
 
-      menuButton.textContent = isOpen ? "✕" : "☰";
+      menuButton.textContent =
+        isOpen ? "✕" : "☰";
 
     });
 
-
-    /* Close menu after clicking a link */
 
     navLinks.forEach((link) => {
 
@@ -194,9 +195,10 @@ document.addEventListener("DOMContentLoaded", () => {
      SCROLL REVEAL
   ======================================================= */
 
-  const elementsToReveal = document.querySelectorAll(
-    ".section-heading, .about-text, .feature-card, .card, .contact-box, .contact-buttons"
-  );
+  const elementsToReveal =
+    document.querySelectorAll(
+      ".section-heading, .about-text, .feature-card, .card, .contact-box, .contact-buttons"
+    );
 
 
   elementsToReveal.forEach((element) => {
@@ -331,7 +333,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =======================================================
-     OPENING LOADER
+     NEW SILENT GS OPENING LOADER
   ======================================================= */
 
   const loader =
@@ -343,12 +345,19 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.style.overflow = "hidden";
 
 
-    /*
-       Wait until the page is loaded,
-       then hide the loader.
-    */
+    const hideLoader = () => {
 
-    window.addEventListener("load", () => {
+      /*
+        The animation gets enough time to show:
+
+        GS
+        ↓
+        GAURAV SAPKOTA
+        ↓
+        loading line
+        ↓
+        website reveal
+      */
 
       setTimeout(() => {
 
@@ -356,11 +365,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
         document.body.style.overflow = "";
 
-      }, 3500);
+      }, 2700);
 
-    });
+    };
+
+
+    /*
+      If the page has already loaded,
+      start the animation immediately.
+    */
+
+    if (document.readyState === "complete") {
+
+      hideLoader();
+
+    } else {
+
+      window.addEventListener(
+        "load",
+        hideLoader,
+        { once: true }
+      );
+
+    }
 
   }
-
 
 });
